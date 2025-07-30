@@ -9,7 +9,7 @@ class Enrollment2024_25(BaseModel):
             "Undergraduate Headcount, Graduate Headcount, Total Headcount, and Total full-time equivalent students (FTE)." 
             "If all of them refer to a year equivalent to 'Fall 2024', such as 'Fall 2024', 'AY 2024–2025','Academic Year 2024–2025', '2024-25', or 'AY 24–25',"
             "then convert it and return only the standardized value '2024–2025'."
-            "Use the same equivalence logic for previous years as well,convert 'Fall 2023', 'AY 2023–2024', '2023–24' to'2023–2024'and so on."
+            "For example, convert 'Fall 2023', 'AY 2023–2024', '2023–24' to '2023–2024'; convert 'Fall 2022' to '2022–2023'; and so on."
             "Always convert when a clearly matching year or term is present." 
             "Do not infer or guess — only convert when the input explicitly matches a known academic year."
         )
@@ -20,18 +20,18 @@ class Enrollment2024_25(BaseModel):
             "Tuition, Room & board cost (20-meal plan)." 
             "If all of them refer to a year equivalent to 'Fall 2024', such as 'Fall 2024', 'AY 2024–2025','Academic Year 2024–2025', '2024-25', or 'AY 24–25',"
             "then convert it and return only the standardized value '2024–2025'."
-            "Use the same equivalence logic for previous years as well,convert 'Fall 2023', 'AY 2023–2024', '2023–24' to'2023–2024'and so on."
+            "For example, convert 'Fall 2023', 'AY 2023–2024', '2023–24' to '2023–2024'; convert 'Fall 2022' to '2022–2023'; and so on."
             "Always convert when a clearly matching year or term is present." 
             "Do not infer or guess — only convert when the input explicitly matches a known academic year."
         )
     )
-    Year_Undergraduate_Headcount: Optional[str] = Field(
-        description=(
-            "Extract the academic year or term (e.g., 'Fall 2024', 'AY 2024–2025', '2024–25') that is associated with the Total undergraduate headcount" 
-            "for the 2024-2025 academic year (Different than undergraduate FTE). "
-            "Do not guess — only extract if both the value and term are shown."
-        )
-    )
+    # Year_Undergraduate_Headcount: Optional[str] = Field(
+    #     description=(
+    #         "Extract the academic year or term (e.g., 'Fall 2024', 'AY 2024–2025', '2024–25') that is associated with the Total undergraduate headcount" 
+    #         "for the 2024-2025 academic year (Different than undergraduate FTE). "
+    #         "Do not guess — only extract if both the value and term are shown."
+    #     )
+    # )
 
     Undergraduate_Headcount: Optional[int] = Field(
         description=(
@@ -71,13 +71,13 @@ class Enrollment2024_25(BaseModel):
     )
 
 
-    Year_Graduate_Headcount: Optional[str] = Field(
-        description=(
-        "Extract the Total graduate headcount for the 2024-2025 academic year and also include the academic year or term" 
-        "(e.g., Fall 2024, AY 2024–2025) that this number belongs to."
-        " Do not guess — only extract if both the value and term are shown."
-        )
-    )
+    # Year_Graduate_Headcount: Optional[str] = Field(
+    #     description=(
+    #     "Extract the Total graduate headcount for the 2024-2025 academic year and also include the academic year or term" 
+    #     "(e.g., Fall 2024, AY 2024–2025) that this number belongs to."
+    #     " Do not guess — only extract if both the value and term are shown."
+    #     )
+    # )
 
     Graduate_Headcount: Optional[int] = Field(
         description=(
@@ -146,14 +146,14 @@ class Enrollment2024_25(BaseModel):
     )
 
 
-    Year_Total_Headcount: Optional[str] = Field(
-        description=(
-            "Extract the academic year or term (e.g., 'Fall 2024', 'AY 2024–2025', '2024–25') that is associated with the" 
-            "overall student headcount for the 2024-2025 academic year." 
-            "Do not guess — only extract if both the value and term are shown."
+    # Year_Total_Headcount: Optional[str] = Field(
+    #     description=(
+    #         "Extract the academic year or term (e.g., 'Fall 2024', 'AY 2024–2025', '2024–25') that is associated with the" 
+    #         "overall student headcount for the 2024-2025 academic year." 
+    #         "Do not guess — only extract if both the value and term are shown."
 
-        )
-    )
+    #     )
+    # )
 
     Total_Headcount: Optional[int] = Field(
         description=(
@@ -204,7 +204,8 @@ class Enrollment2024_25(BaseModel):
         description=(
             "Undergraduate full-time equivalent (FTE) headcount for the most recent academic year available. "
             "FTE (full-time equivalent) is different from full-time or part-time. "
-            "Search around the tables to identify what type of enrollment information it is. "
+            "Search the table for a 'Undergraduate' or equivalent column/section and look for the value under the 'FTEs' label." 
+            "Always ensure the FTE corresponds to the 'Undergraduate' category explicitly. "
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25','2024-2025','Fall 2023', '2023', etc. "
             "It’s possible for a school to have multiple campuses — combine all campuses' counts if applicable. "
             "Do not derive or hallucinate the data unless the field is actually in the document."
@@ -217,7 +218,8 @@ class Enrollment2024_25(BaseModel):
             "Post-baccalaureate is considered a graduate headcount. "
             "FTE (full-time equivalent) is different from full-time. "
             "Combine enrollment across all graduate schools (e.g., Business, Education, etc.). "
-            "Search around the tables to identify what type of enrollment information it is. "
+            "Search the table for a 'Graduate' or equivalent column/section and look for the value under the 'FTEs' label." 
+            "Always ensure the FTE corresponds to the 'Graduate' category explicitly. "
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25','2024-2025','Fall 2023', '2023', etc. "
             "It’s possible for a school to have multiple campuses — combine all campuses' counts if applicable. "
             "Do not derive or hallucinate the data unless the field is actually in the document."
@@ -228,20 +230,21 @@ class Enrollment2024_25(BaseModel):
         description=(
             "Professional school full-time equivalent (FTE) headcount for the most recent academic year available. "
             "FTE (full-time equivalent) is different from full-time. "
-            "Search around the tables to identify what type of enrollment information it is. "
+            "Search the table for a 'Professional' or equivalent column/section and look for the value under the 'FTEs' label." 
+            "Always ensure the FTE corresponds to the 'Professional' category explicitly. "
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25','2024-2025','Fall 2023', '2023', etc. "
             "It’s possible for a school to have multiple campuses — combine all campuses' counts if applicable. "
             "Do not derive or hallucinate the data unless the field is actually in the document."
         )
     )
 
-    Year_Total_Full_Time_Equivalent_Students: Optional[str] = Field(
-        description=(
-            "Extract the academic year or term (e.g., 'Fall 2024', 'AY 2024–2025', '2024–25') that is associated with the" 
-            "total full-time equivalent headcount or FTE for the 2024-2025 academic year. FTE (full-time equivalent) is different than full-time, or FT.  "
-            "Do not guess — only extract if both the value and term are shown."
-        )
-    )
+    # Year_Total_Full_Time_Equivalent_Students: Optional[str] = Field(
+    #     description=(
+    #         "Extract the academic year or term (e.g., 'Fall 2024', 'AY 2024–2025', '2024–25') that is associated with the" 
+    #         "total full-time equivalent headcount or FTE for the 2024-2025 academic year. FTE (full-time equivalent) is different than full-time, or FT.  "
+    #         "Do not guess — only extract if both the value and term are shown."
+    #     )
+    # )
 
     Total_Full_Time_Equivalent_Students: Optional[int] = Field(
         description=(
@@ -387,13 +390,13 @@ class Enrollment2024_25(BaseModel):
         )
     )
 
-    Year_Tuition: Optional[str] = Field(
-        description=(
-            "Extract the academic year or term (e.g., 'Fall 2024', 'AY 2024–2025', '2024–25') that is associated with the" 
-            "Undergraduate tuition rate for the 2024-2025 academic year. This is different than revenue generated by" 
-            "tuition or any financial accounting data.  Do not guess — only extract if both the value and term are shown."
-        )
-    )
+    # Year_Tuition: Optional[str] = Field(
+    #     description=(
+    #         "Extract the academic year or term (e.g., 'Fall 2024', 'AY 2024–2025', '2024–25') that is associated with the" 
+    #         "Undergraduate tuition rate for the 2024-2025 academic year. This is different than revenue generated by" 
+    #         "tuition or any financial accounting data.  Do not guess — only extract if both the value and term are shown."
+    #     )
+    # )
 
     Tuition: Optional[int] = Field(
         description=(
@@ -409,13 +412,13 @@ class Enrollment2024_25(BaseModel):
         )
     )
 
-    Year_Room_and_Board_20_meals: Optional[str] = Field(
-        description=(
-            "Extract the academic year or term (e.g., 'Fall 2024', 'AY 2024–2025', '2024–25') that is associated with the" 
-            "Room & board cost (20-meal plan) for the 2024-2025 academic year." 
-            "Do not guess — only extract if both the value and term are shown."
-        )
-    )
+    # Year_Room_and_Board_20_meals: Optional[str] = Field(
+    #     description=(
+    #         "Extract the academic year or term (e.g., 'Fall 2024', 'AY 2024–2025', '2024–25') that is associated with the" 
+    #         "Room & board cost (20-meal plan) for the 2024-2025 academic year." 
+    #         "Do not guess — only extract if both the value and term are shown."
+    #     )
+    # )
     
     Room_and_Board_20_meals: Optional[int] = Field(
         description=(
