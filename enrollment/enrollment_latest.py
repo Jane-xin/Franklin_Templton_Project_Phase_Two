@@ -5,9 +5,9 @@ from pydantic import BaseModel, Field
 class Enrollment2024_25(BaseModel):
     Year_Headcount: Optional[str] = Field(
         description=(
-            "Collect the academic year or term (e.g., '2024–25','Fall 2024', 'AY 2024–2025') associated with the following fields:" 
-            "Undergraduate Headcount, Graduate Headcount, Total Headcount, and Total full-time equivalent students (FTE)." 
-            "If all of them refer to a year equivalent to 'Fall 2024', such as 'Fall 2024', 'AY 2024–2025','Academic Year 2024–2025', '2024-25', or 'AY 24–25',"
+            "Collect the academic year or term (e.g., '2024–25','Fall 2024', 'AY 2024–2025') associated with any of the following fields:" 
+            "Total full-time equivalent students (FTE), Undergraduate Headcount, Graduate Headcount, or Total Headcount." 
+            "If they refer to a year equivalent to 'Fall 2024', such as 'Fall 2024', 'AY 2024–2025','Academic Year 2024–2025', '2024-25', or 'AY 24–25',"
             "then convert it and return only the standardized value '2024–2025'."
             "For example, convert 'Fall 2023', 'AY 2023–2024', '2023–24' to '2023–2024'; convert 'Fall 2022' to '2022–2023'; and so on."
             "Always convert when a clearly matching year or term is present." 
@@ -158,7 +158,9 @@ class Enrollment2024_25(BaseModel):
     Total_Headcount: Optional[int] = Field(
         description=(
             "Overall student headcount for the most recent academic year available. "
-            "Do **not** compute it by adding Undergraduate, Graduate, Professional, etc. "
+            #"Do **not** compute it by adding Undergraduate, Graduate, Professional, etc. "
+            "Compute it by adding Undergraduate_Headcount, Graduate_Headcount, Professional_Headcount, etc., if the document does not have it."
+            "When summing, treat any missing or blank values as 0. "
             "Search around the tables to identify what type of enrollment information it is. "
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25', '2024-2025','Fall 2023', '2023', etc. "
             "Compare all academic years present (e.g., '2023–24', '2024–25') and extract **only the value associated with the latest year**. "
@@ -203,7 +205,7 @@ class Enrollment2024_25(BaseModel):
     Undergraduate_FTE: Optional[int] = Field(
         description=(
             "Undergraduate full-time equivalent (FTE) headcount for the most recent academic year available. "
-            "FTE (full-time equivalent) is different from full-time or part-time. "
+            "FTE (full-time equivalent) is different from full-time or part-time headcount.  "
             "Search the table for a 'Undergraduate' or equivalent column/section and look for the value under the 'FTEs' label." 
             "Always ensure the FTE corresponds to the 'Undergraduate' category explicitly. "
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25','2024-2025','Fall 2023', '2023', etc. "
@@ -216,7 +218,7 @@ class Enrollment2024_25(BaseModel):
         description=(
             "Graduate full-time equivalent (FTE) headcount for the most recent academic year available. "
             "Post-baccalaureate is considered a graduate headcount. "
-            "FTE (full-time equivalent) is different from full-time. "
+            "FTE (full-time equivalent) is different from full-time or part-time headcount.  "
             "Combine enrollment across all graduate schools (e.g., Business, Education, etc.). "
             "Search the table for a 'Graduate' or equivalent column/section and look for the value under the 'FTEs' label." 
             "Always ensure the FTE corresponds to the 'Graduate' category explicitly. "
@@ -229,7 +231,7 @@ class Enrollment2024_25(BaseModel):
     Professional_FTE: Optional[int] = Field(
         description=(
             "Professional school full-time equivalent (FTE) headcount for the most recent academic year available. "
-            "FTE (full-time equivalent) is different from full-time. "
+            "FTE (full-time equivalent) is different from full-time or part-time headcount.  "
             "Search the table for a 'Professional' or equivalent column/section and look for the value under the 'FTEs' label." 
             "Always ensure the FTE corresponds to the 'Professional' category explicitly. "
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25','2024-2025','Fall 2023', '2023', etc. "
@@ -301,6 +303,43 @@ class Enrollment2024_25(BaseModel):
         )
     )
 
+
+    # Total_Applications_Rcvd: Optional[int] = Field(
+    #     description=(
+    #         "Total applications received for the most recent applications cycle. "
+    #         "Search around the tables to identify the application cycle year, such as "
+    #         "'Fall 2024', '2024–25', '2024–2025', '2023–2024', 'Fall 2023', or '2023'. "
+    #         "If the total applications value is explicitly provided in the document, extract that value. "
+    #         "If the total is not explicitly stated, calculate it by summing the values from "
+    #         "Undergraduate_Applications_Rcvd, Graduate_Applications_Rcvd, and Transfer_Applications_Rcvd "
+    #         "(and any other application categories if present). "
+    #         "Compare all academic years present and extract **only the value associated with the latest year**. "
+    #         "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only. "
+    #         "Do not extract values for earlier years. "
+    #         "Ignore older years or terms. "
+    #         "Combine across all campuses if applicable. "
+    #         "Do not derive or hallucinate values unless they are explicitly calculable from the document data."
+    #     )
+    # )
+    Total_Applications_Rcvd: Optional[int] = Field(
+        description=(
+            "Total applications received for the most recent applications cycle. "
+            "Search around the tables to identify the application cycle year, such as "
+            "'Fall 2024', '2024–25', '2024–2025', '2023–2024', 'Fall 2023', or '2023'. "
+            "If the total applications value is explicitly provided in the document, extract that value. "
+            "If the total is not explicitly stated, calculate it by summing the values from "
+            "Undergraduate_Applications_Rcvd, Graduate_Applications_Rcvd, and Transfer_Applications_Rcvd "
+            "(and any other application categories if present). "
+            "When summing, treat any missing or blank values as 0. "
+            "Compare all academic years present and extract **only the value associated with the latest year**. "
+            "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only. "
+            "Do not extract values for earlier years. "
+            "Ignore older years or terms. "
+            "Combine across all campuses if applicable. "
+            "Do not derive or hallucinate values unless they are explicitly calculable from the document data."
+        )
+    )
+
     Undergraduate_Acceptances: Optional[int] = Field(
         description=(
             "Total undergraduate acceptances for the most recent admissions cycle. "
@@ -335,6 +374,24 @@ class Enrollment2024_25(BaseModel):
             "Do not derive or hallucinate the data unless the field is actually in the document."
         )
     )
+    Total_Acceptances_Rcvd: Optional[int] = Field(
+        description=(
+            "Total Acceptances received for the most recent applications cycle. "
+            "Search around the tables to identify the application cycle year, such as "
+            "'Fall 2024', '2024–25', '2024–2025', '2023–2024', 'Fall 2023', or '2023'. "
+            "If the total applications value is explicitly provided in the document, extract that value. "
+            "If the total is not explicitly stated, calculate it by summing the values from "
+            "Undergraduate_Acceptances_Rcvd, Graduate_Acceptances_Rcvd, and Transfer_Acceptances_Rcvd "
+            "(and any other application categories if present). "
+            "When summing, treat any missing or blank values as 0. "
+            "Compare all academic years present and extract **only the value associated with the latest year**. "
+            "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only. "
+            "Do not extract values for earlier years. "
+            "Ignore older years or terms. "
+            "Combine across all campuses if applicable. "
+            "Do not derive or hallucinate values unless they are explicitly calculable from the document data."
+        )
+    )
 
     Undergraduate_Matriculants: Optional[int] = Field(
         description=(
@@ -366,6 +423,24 @@ class Enrollment2024_25(BaseModel):
         )
     )
 
+    Total_Matriculants_Rcvd: Optional[int] = Field(
+        description=(
+            "Total Matriculants received for the most recent applications cycle. "
+            "Search around the tables to identify the application cycle year, such as "
+            "'Fall 2024', '2024–25', '2024–2025', '2023–2024', 'Fall 2023', or '2023'. "
+            "If the total applications value is explicitly provided in the document, extract that value. "
+            "If the total is not explicitly stated, calculate it by summing the values from "
+            "Undergraduate_Matriculants_Rcvd, Graduate_Matriculants_Rcvd, and Transfer_Matriculants_Rcvd "
+            "(and any other application categories if present). "
+            "When summing, treat any missing or blank values as 0. "
+            "Compare all academic years present and extract **only the value associated with the latest year**. "
+            "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only. "
+            "Do not extract values for earlier years. "
+            "Ignore older years or terms. "
+            "Combine across all campuses if applicable. "
+            "Do not derive or hallucinate values unless they are explicitly calculable from the document data."
+        )
+    )
     Retention_Rate: Optional[float] = Field(
         description=(
             "Retention rate (%) for the most recent entering cohort (e.g., Fall 2024, Fall 2023). "
@@ -375,6 +450,35 @@ class Enrollment2024_25(BaseModel):
             "Do not derive or hallucinate the data unless the field is actually in the document."
         )
     )
+
+    Full_Time_Employees: Optional[int] = Field(
+        description=(
+            "Total number of full-time employees (staff/faculty) for the most recent academic year available. "
+            "Search around the tables to identify the latest year (e.g., Fall 2024, AY 2024–25, 2023–24, 2023–2024, 2023, etc.). "
+            "If multiple years are present, always choose the one that represents the latest year. "
+            "Compare all academic years present and extract **only the value associated with the latest year**. "
+            "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only. "
+            "Do not extract values for earlier years. "
+            "Ignore data outside this period. "
+            "If possible for a school to have multiple campuses – combine across all campuses if applicable. "
+            "Do not derive or hallucinate the data unless the field is actually in the document."
+        )
+    )
+
+    Part_Time_Employees: Optional[int] = Field(
+        description=(
+            "Total number of part-time employees (staff/faculty) for the most recent academic year available. "
+            "Search around the tables to identify the latest year (e.g., Fall 2024, AY 2024–25, 2023–24, 2023–2024, 2023, etc.). "
+            "If multiple years are present, always choose the one that represents the latest year. "
+            "Compare all academic years present and extract **only the value associated with the latest year**. "
+            "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only. "
+            "Do not extract values for earlier years. "
+            "Ignore data outside this period. "
+            "If possible for a school to have multiple campuses – combine across all campuses if applicable. "
+            "Do not derive or hallucinate the data unless the field is actually in the document."
+        )
+    )
+
 
     Full_Time_Employee_Equivalents: Optional[int] = Field(
         description=(
