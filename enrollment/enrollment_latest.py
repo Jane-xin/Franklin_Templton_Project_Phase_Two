@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 class Enrollment2024_25(BaseModel):
     Year_Headcount: Optional[str] = Field(
         description=(
-            "Collect the academic year or term (e.g., '2024–25','Fall 2024', 'AY 2024–2025') associated with any of the following fields:" 
+            "Collect the academic year or term (e.g., '2024–25','Fall 2024', 'AY 2024–2025') associated with these following fields:" 
             "Total full-time equivalent students (FTE), Undergraduate Headcount, Graduate Headcount, or Total Headcount." 
             "If they refer to a year equivalent to 'Fall 2024', such as 'Fall 2024', 'AY 2024–2025','Academic Year 2024–2025', '2024-25', or 'AY 24–25',"
             "then convert it and return only the standardized value '2024–2025'."
@@ -479,10 +479,24 @@ class Enrollment2024_25(BaseModel):
         )
     )
 
+    Total_Employees: Optional[int] = Field(
+            description=(
+        "Overall headcount of employees (staff/faculty headcount) for the most recent academic year available."
+        "Compute it by adding total full-time employees headcount and total part-time employees headcount etc., if the document does not have it." 
+        "When summing, treat any missing or blank values as 0."
+        "Search around the tables to identify the latest year (e.g., Fall 2024, AY 2024–25, 2023-24,2023-2024, 2023,etc.). "
+        "Compare all academic years present (e.g., '2023–24', '2024–25') and extract **only the value associated with the latest year**." 
+        "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only."
+        "Do not extract values for earlier years. It’s possible for a school to have multiple campuses — combine all campuses' counts if applicable." 
+        "Do not derive or hallucinate the data unless the field is actually in the document."
+        )
+    )
 
-    Full_Time_Employee_Equivalents: Optional[int] = Field(
+
+    Total_Full_Time_Employee_Equivalents: Optional[int] = Field(
         description=(
             "Full-time employee equivalents (staff/faculty) for the most recent academic year available. "
+            "FTE (full-time equivalent) is different from full-time or part-time headcount.  "
             "Search around the tables to identify the latest year (e.g., Fall 2024, AY 2024–25, 2023-24,2023-2024, 2023,etc.). "
             "If multiple years are present (e.g., '2023–24' and '2024–25'), always choose the one that represents the latest year."
             "Compare all academic years present (e.g., '2023–24', '2024–25') and extract **only the value associated with the latest year**. "
