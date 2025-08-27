@@ -341,9 +341,8 @@ class Enrollment2024_25(BaseModel):
             "Search around the tables to identify the application cycle year, such as "
             "'Fall 2024', '2024–25', '2024–2025', '2023–2024', 'Fall 2023', or '2023'. "
             "If the total applications value is explicitly provided in the document, extract that value. "
-            "If the total is not explicitly stated, calculate it by summing the values from "
-            "Undergraduate_Applications_Rcvd, Graduate_Applications_Rcvd, and Transfer_Applications_Rcvd "
-            "(and any other application categories if present). "
+            "If the total is not explicitly stated, calculate it by summing all application categories shown" 
+            "(e.g., Undergraduate, Graduate, Transfer, Law, Medical, or other programs)."
             "When summing, treat any missing or blank values as 0. "
             "Compare all academic years present and extract **only the value associated with the latest year**. "
             "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only. "
@@ -384,7 +383,6 @@ class Enrollment2024_25(BaseModel):
             "Extract values ONLY it is explicitly labeled as 'Transfer' (e.g., 'Transfer Applications', 'Transfer Applicants')." 
             "Do not use counts that are not clearly marked as transfer, even if they appear in tables for Law, Graduate, or Undergraduate." 
             "EXCLUDE professional programs such as Law (JD/LLM), Medicine (MD), Dental, Veterinary, Pharmacy, MBA, or other explicitly professional schools. "
-
             "Search around the tables to identify the application cycle year, such as 'Fall 2024','2024-25','2024-2025,'2023-2024', 'Fall 2023', or '2023'. "
             "If multiple years are present (e.g., '2023–24' and '2024–25'), always choose the one that represents the latest year."
             "Ignore older years or terms. "
@@ -398,9 +396,8 @@ class Enrollment2024_25(BaseModel):
             "Search around the tables to identify the application cycle year, such as "
             "'Fall 2024', '2024–25', '2024–2025', '2023–2024', 'Fall 2023', or '2023'. "
             "If the total applications value is explicitly provided in the document, extract that value. "
-            "If the total is not explicitly stated, calculate it by summing the values from "
-            "Undergraduate_Acceptances_Rcvd, Graduate_Acceptances_Rcvd, and Transfer_Acceptances_Rcvd "
-            "(and any other application categories if present). "
+            "If the total is not explicitly stated, calculate it by summing all application categories shown" 
+            "(e.g., Undergraduate, Graduate, Transfer, Law, Medical, or other programs)."
             "When summing, treat any missing or blank values as 0. "
             "Compare all academic years present and extract **only the value associated with the latest year**. "
             "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only. "
@@ -437,7 +434,6 @@ class Enrollment2024_25(BaseModel):
             "Extract values ONLY it is explicitly labeled as 'Transfer' (e.g., 'Transfer Applications', 'Transfer Applicants')." 
             "Do not use counts that are not clearly marked as transfer, even if they appear in tables for Law, Graduate, or Undergraduate." 
             "EXCLUDE professional programs such as Law (JD/LLM), Medicine (MD), Dental, Veterinary, Pharmacy, MBA, or other explicitly professional schools. "
-
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25','2024-2025','Fall 2023', '2023', etc. "
             "Ignore older years or terms. "
             "Combine across all campuses if applicable. "
@@ -451,9 +447,8 @@ class Enrollment2024_25(BaseModel):
             "Search around the tables to identify the application cycle year, such as "
             "'Fall 2024', '2024–25', '2024–2025', '2023–2024', 'Fall 2023', or '2023'. "
             "If the total applications value is explicitly provided in the document, extract that value. "
-            "If the total is not explicitly stated, calculate it by summing the values from "
-            "Undergraduate_Matriculants_Rcvd, Graduate_Matriculants_Rcvd, and Transfer_Matriculants_Rcvd "
-            "(and any other application categories if present). "
+            "If the total is not explicitly stated, calculate it by summing all application categories shown" 
+            "(e.g., Undergraduate, Graduate, Transfer, Law, Medical, or other programs)."
             "When summing, treat any missing or blank values as 0. "
             "Compare all academic years present and extract **only the value associated with the latest year**. "
             "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only. "
@@ -466,6 +461,8 @@ class Enrollment2024_25(BaseModel):
     Retention_Rate: Optional[float] = Field(
         description=(
             "Retention rate (%) for the most recent entering cohort (e.g., Fall 2024, Fall 2023). "
+            "Extract the integer value shown in the tables (e.g., if the document shows '90%' or '0.9', return 90)." 
+            "Do not convert to decimal fractions. Always store retention rate as a whole integer percentage (0–100)."
             "Search around the tables to identify which cohort year the retention rate applies to. "
             "Ignore data outside this period. "
             "It’s possible for a school to have multiple campuses — combine across all campuses if applicable. "
@@ -476,6 +473,7 @@ class Enrollment2024_25(BaseModel):
     Full_Time_Employees: Optional[int] = Field(
         description=(
             "Total number of full-time employees (staff/faculty) for the most recent academic year available. "
+            "It is different from FTE, so do not use FTE headcout as full time employees headcount unless the table or field specified." 
             "Search around the tables to identify the latest year (e.g., Fall 2024, AY 2024–25, 2023–24, 2023–2024, 2023, etc.). "
             "If multiple years are present, always choose the one that represents the latest year. "
             "Compare all academic years present and extract **only the value associated with the latest year**. "
