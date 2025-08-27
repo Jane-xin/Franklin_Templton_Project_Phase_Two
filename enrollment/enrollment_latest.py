@@ -5,11 +5,13 @@ from pydantic import BaseModel, Field
 class Enrollment2024_25(BaseModel):
     Year_Headcount: Optional[str] = Field(
         description=(
-            "Collect the academic year or term (e.g., '2024–25','Fall 2024', 'AY 2024–2025') associated with any of the following fields:" 
-            "Total full-time equivalent students (FTE), Undergraduate Headcount, Graduate Headcount, or Total Headcount." 
-            "If they refer to a year equivalent to 'Fall 2024', such as 'Fall 2024', 'AY 2024–2025','Academic Year 2024–2025', '2024-25', or 'AY 24–25',"
-            "then convert it and return only the standardized value '2024–2025'."
-            "For example, convert 'Fall 2023', 'AY 2023–2024', '2023–24' to '2023–2024'; convert 'Fall 2022' to '2022–2023'; and so on."
+            "Collect the academic year or term (e.g., '2024–25','Fall 2024', 'AY 2024–2025') associated with these following fields:" 
+            "Total Full Time Equivalent Students (FTE), Undergraduate Headcount, Graduate Headcount, or Total Headcount." 
+            "Even though these fields only have one value, still do the conversion."
+            "If they refer to a year equivalent to 'Fall 2024', such as 'Fall 2024', 'AY 2024–2025','Academic Year 2024–2025', '2024-25','2024' ,  or 'AY 24–25',"
+            "then convert it and return ONLY the standardized format '2024–2025'."
+            "Always ensure the result includes a hyphen between the two years. "
+            "For example, convert 'Fall 2023', 'AY 2023–2024', 'FY 2024','Fiscal 2024','2023–24' to '2023–2024'; convert 'Fall 2022' to '2022–2023'; and so on."
             "Always convert when a clearly matching year or term is present." 
             "Do not infer or guess — only convert when the input explicitly matches a known academic year."
         )
@@ -19,7 +21,8 @@ class Enrollment2024_25(BaseModel):
             "Collect the academic year or term (e.g.,'2024–25', 'Fall 2024', 'AY 2024–2025') associated with the following fields:" 
             "Tuition, Room & board cost (20-meal plan)." 
             "If all of them refer to a year equivalent to 'Fall 2024', such as 'Fall 2024', 'AY 2024–2025','Academic Year 2024–2025', '2024-25', or 'AY 24–25',"
-            "then convert it and return only the standardized value '2024–2025'."
+            "then convert it and return ONLY the standardized format '2024–2025'."
+            "Always ensure the result includes a hyphen between the two years. "
             "For example, convert 'Fall 2023', 'AY 2023–2024', '2023–24' to '2023–2024'; convert 'Fall 2022' to '2022–2023'; and so on."
             "Always convert when a clearly matching year or term is present." 
             "Do not infer or guess — only convert when the input explicitly matches a known academic year."
@@ -39,6 +42,7 @@ class Enrollment2024_25(BaseModel):
             "(Different than undergraduate FTE. Sometimes you need to combine both full-time and part time). "
             "Search around the tables to locate what type of enrollment information it is. "
             "Look for the latest academic year or term, such as 'Fall 2024', 'Fall 2023', 'AY 2024–25', '2024-25','2023', 'Fall 2023', 'Fall 2022'."
+            "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only." 
             "it's possible for a school to have multiple campuses, so combine all campuses' count or online and in-person count if applicable. "
             "If it didn't specify what kind of headcount it is, do not assume it's undergraduate headcount!!! "
             "Combine online and in-person if applicable. "
@@ -53,6 +57,7 @@ class Enrollment2024_25(BaseModel):
             "This is different from FTE (full-time equivalent). "
             "Search around the tables to identify what type of enrollment information it is. "
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25', '2024-2025','Fall 2023', '2023', etc. "
+            "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only." 
             "Combine across all campuses if the institution has multiple locations. "
             "Don't assume it's undergraduate full-time unless it explicitly says so in the data description. "
             "When there is no specification of what kind of full-time it is, it should be total full-time. "
@@ -64,6 +69,7 @@ class Enrollment2024_25(BaseModel):
             "Undergraduate part-time (PT) headcount for the most recent academic year available. "
             "Search around the tables to identify what type of enrollment information it is. "
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25', '2024-2025','Fall 2023', '2023', etc. "
+             "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only." 
             "Combine across all campuses if the institution has multiple locations. "
             "Don't assume it's undergraduate full-time unless it explicitly says so in the data description. "
             "When there is no specification of what kind of part-time it is, it should be total part-time."
@@ -89,6 +95,7 @@ class Enrollment2024_25(BaseModel):
             "Combine online and in-person if applicable. "
             "Graduate headcount may be labeled as 'GR', 'Grad', or 'Graduate'. "
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25', '2024-2025','Fall 2023', '2023', etc. "
+             "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only." 
             "It’s possible for a school to have multiple campuses — combine all campuses' counts or online and in-person counts if applicable. "
             "Do not derive or hallucinate the data unless the field is actually in the document."
         )
@@ -102,6 +109,7 @@ class Enrollment2024_25(BaseModel):
             "This is different from FTE (full-time equivalent). "
             "Combine across all graduate schools. "
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25', '2024-2025','Fall 2023', '2023', etc. "
+            "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only." 
             "Combine across campuses if needed. "
             "Don't assume it's graduate full-time unless it explicitly says so in the data description. "
             "When there is no specification of what kind of full-time it is, it should be total full-time. "
@@ -115,6 +123,7 @@ class Enrollment2024_25(BaseModel):
             "Post-baccalaureate is considered a graduate headcount. "
             "Combine across all graduate schools. "
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25', '2024-2025','Fall 2023', '2023', etc. "
+            "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only." 
             "Combine across campuses if needed. "
             "Don't assume it's graduate part-time unless it explicitly says so in the data description. "
             "When there is no specification of what kind of part-time it is, it should be total part-time. "
@@ -128,6 +137,7 @@ class Enrollment2024_25(BaseModel):
             "This is different from professional FTE. Sometimes you need to combine both full-time and part-time. "
             "Search around the tables to identify what type of enrollment information it is. "
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25', '2024-2025','Fall 2023', '2023', etc. "
+            "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only." 
             "It’s possible for a school to have multiple campuses — combine all campuses' counts if applicable. "
             "Do not derive or hallucinate the data unless the field is actually in the document."
         )
@@ -140,6 +150,7 @@ class Enrollment2024_25(BaseModel):
             "Sometimes, Non-Degree is labeled as Non-Credit. "
             "Search around the tables to identify what type of enrollment information it is. "
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25', '2024-2025','Fall 2023', '2023', etc. "
+            "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only." 
             "It’s possible for a school to have multiple campuses — combine all campuses' counts if applicable. "
             "Do not derive or hallucinate the data unless the field is actually in the document."
         )
@@ -293,6 +304,9 @@ class Enrollment2024_25(BaseModel):
     Transfer_Applications_Rcvd: Optional[int] = Field(
         description=(
             "Total transfer applications received for the most recent applications cycle. "
+            "Extract values ONLY it is explicitly labeled as 'Transfer' (e.g., 'Transfer Applications', 'Transfer Applicants')." 
+            "Do not use counts that are not clearly marked as transfer, even if they appear in tables for Law, Graduate, or Undergraduate." 
+            "EXCLUDE professional programs such as Law (JD/LLM), Medicine (MD), Dental, Veterinary, Pharmacy, MBA, or other explicitly professional schools. "
             "Search around the tables to identify the application cycle year, such as 'Fall 2024','2024-25','2024-2025,'2023-2024', 'Fall 2023', or '2023'. "
             "Compare all academic years present (e.g., '2023–24', '2024–25') and extract **only the value associated with the latest year**. "
             "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only." 
@@ -367,6 +381,10 @@ class Enrollment2024_25(BaseModel):
     Transfer_Acceptances: Optional[int] = Field(
         description=(
             "Total transfer acceptances for the most recent admissions cycle. "
+            "Extract values ONLY it is explicitly labeled as 'Transfer' (e.g., 'Transfer Applications', 'Transfer Applicants')." 
+            "Do not use counts that are not clearly marked as transfer, even if they appear in tables for Law, Graduate, or Undergraduate." 
+            "EXCLUDE professional programs such as Law (JD/LLM), Medicine (MD), Dental, Veterinary, Pharmacy, MBA, or other explicitly professional schools. "
+
             "Search around the tables to identify the application cycle year, such as 'Fall 2024','2024-25','2024-2025,'2023-2024', 'Fall 2023', or '2023'. "
             "If multiple years are present (e.g., '2023–24' and '2024–25'), always choose the one that represents the latest year."
             "Ignore older years or terms. "
@@ -416,6 +434,10 @@ class Enrollment2024_25(BaseModel):
     Transfer_Matriculants: Optional[int] = Field(
         description=(
             "Number of transfer students who matriculated in the most recent academic year. "
+            "Extract values ONLY it is explicitly labeled as 'Transfer' (e.g., 'Transfer Applications', 'Transfer Applicants')." 
+            "Do not use counts that are not clearly marked as transfer, even if they appear in tables for Law, Graduate, or Undergraduate." 
+            "EXCLUDE professional programs such as Law (JD/LLM), Medicine (MD), Dental, Veterinary, Pharmacy, MBA, or other explicitly professional schools. "
+
             "Look for the latest academic year or term, such as 'Fall 2024', 'AY 2024–25','2024-25','2024-2025','Fall 2023', '2023', etc. "
             "Ignore older years or terms. "
             "Combine across all campuses if applicable. "
@@ -467,22 +489,37 @@ class Enrollment2024_25(BaseModel):
 
     Part_Time_Employees: Optional[int] = Field(
         description=(
-            "Total number of part-time employees (staff/faculty) for the most recent academic year available. "
+            "Total number of *part-time employees (staff/faculty)* for the most recent academic year available. "
             "Search around the tables to identify the latest year (e.g., Fall 2024, AY 2024–25, 2023–24, 2023–2024, 2023, etc.). "
             "If multiple years are present, always choose the one that represents the latest year. "
             "Compare all academic years present and extract **only the value associated with the latest year**. "
             "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only. "
             "Do not extract values for earlier years. "
             "Ignore data outside this period. "
+            "If the source lists faculty, combined staff/faculty, or employee groups that do not clearly represent staff (e.g., skilled crafts, service, or other categories), do not extract any value. "
             "If possible for a school to have multiple campuses – combine across all campuses if applicable. "
             "Do not derive or hallucinate the data unless the field is actually in the document."
         )
     )
 
+    Total_Employees: Optional[int] = Field(
+            description=(
+        "Overall headcount of employees (staff/faculty headcount) for the most recent academic year available."
+        "Compute it by adding total full-time employees headcount and total part-time employees headcount etc., if the document does not have it." 
+        "When summing, treat any missing or blank values as 0."
+        "Search around the tables to identify the latest year (e.g., Fall 2024, AY 2024–25, 2023-24,2023-2024, 2023,etc.). "
+        "Compare all academic years present (e.g., '2023–24', '2024–25') and extract **only the value associated with the latest year**." 
+        "For example, if both '2023–24' and '2024–25' appear, return the value for '2024–25' only."
+        "Do not extract values for earlier years. It’s possible for a school to have multiple campuses — combine all campuses' counts if applicable." 
+        "Do not derive or hallucinate the data unless the field is actually in the document."
+        )
+    )
 
-    Full_Time_Employee_Equivalents: Optional[int] = Field(
+
+    Total_Full_Time_Employee_Equivalents: Optional[int] = Field(
         description=(
             "Full-time employee equivalents (staff/faculty) for the most recent academic year available. "
+            "FTE (full-time equivalent) is different from full-time or part-time headcount.  "
             "Search around the tables to identify the latest year (e.g., Fall 2024, AY 2024–25, 2023-24,2023-2024, 2023,etc.). "
             "If multiple years are present (e.g., '2023–24' and '2024–25'), always choose the one that represents the latest year."
             "Compare all academic years present (e.g., '2023–24', '2024–25') and extract **only the value associated with the latest year**. "
